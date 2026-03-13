@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Debate Coach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .mode-section {
+            display: none;
+        }
+
+        .mode-section.active {
+            display: block;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .research-results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .research-results.show {
+            display: block;
+        }
+
+        .progress-indicator {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .progress-indicator.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .source-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .source-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .source-card.selected {
+            background: #e7f0ff;
+            border-left-color: #28a745;
+        }
+
+        .source-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .source-meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .source-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .debate-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .debate-interface {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .debate-interface.active {
+            display: block;
+        }
+
+        .debate-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .debate-status {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .debate-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: #e7f0ff;
+            border-left: 4px solid #667eea;
+        }
+
+        .message.ai {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .message-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .debrief-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .debrief-section.show {
+            display: block;
+        }
+
+        .debrief-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .debrief-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .debrief-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        .debrief-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        .score-good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score-fair {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score-needs-work {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .research-package {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .research-package.show {
+            display: block;
+        }
+
+        .package-section {
+            margin-bottom: 30px;
+        }
+
+        .package-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .export-btn {
+            background: #28a745;
+            margin-top: 20px;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-tab {
+                width: 100%;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .debate-config {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🎯 AI Debate Coach</div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchMode('research')">Research Mode</button>
+                <button class="nav-tab" onclick="switchMode('mock')">Mock Debate</button>
+                <button class="nav-tab" onclick="switchMode('progress')">Progress</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Research Mode -->
+            <div id="research-mode" class="mode-section active">
+                <h1>Research Mode</h1>
+                <p class="subtitle">Find and organize high-quality debate evidence in minutes</p>
+
+                <div class="input-group">
+                    <label for="topic">Debate Topic / Resolution</label>
+                    <input type="text" id="topic" placeholder="e.g., This House Would prioritize economic growth over environmental regulation">
+                </div>
+
+                <div class="input-group">
+                    <label for="format">Competition Format</label>
+                    <select id="format">
+                        <option value="">Select format...</option>
+                        <option value="parliamentary">Parliamentary</option>
+                        <option value="policy">Policy</option>
+                        <option value="lincoln-douglas">Lincoln-Douglas</option>
+                        <option value="public-forum">Public Forum</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="startResearch()">Start Research</button>
+
+                <div class="progress-indicator" id="research-progress">
+                    <div class="spinner"></div>
+                    <p>Searching academic databases and web sources...</p>
+                    <p style="font-size: 14px; color: #666; margin-top: 10px;">Estimated time: 15-30 seconds</p>
+                </div>
+
+                <div class="research-results" id="research-results">
+                    <h2 style="margin-bottom: 20px;">Research Results</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Click sources to add them to your research package</p>
+                    <div id="sources-container"></div>
+
+                    <div class="action-buttons">
+                        <button class="btn" onclick="generatePackage()">Generate Research Package</button>
+                        <button class="btn btn-secondary" onclick="resetResearch()">New Search</button>
+                    </div>
+                </div>
+
+                <div class="research-package" id="research-package">
+                    <h2 style="margin-bottom: 20px;">Research Package</h2>
+                    <div id="package-content"></div>
+                    <button class="btn export-btn" onclick="exportPackage()">Export Package</button>
+                </div>
+            </div>
+
+            <!-- Mock Debate Mode -->
+            <div id="mock-mode" class="mode-section">
+                <h1>Mock Debate</h1>
+                <p class="subtitle">Practice with AI-powered opponents adapted to your format</p>
+
+                <div class="debate-config">
+                    <div class="input-group">
+                        <label for="debate-topic">Debate Topic</label>
+                        <input type="text" id="debate-topic" placeholder="Enter your debate topic">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="debate-format">Format</label>
+                        <select id="debate-format">
+                            <option value="parliamentary">Parliamentary</option>
+                            <option value="policy">Policy</option>
+                            <option value="lincoln-douglas">Lincoln-Douglas</option>
+                            <option value="public-forum">Public Forum</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="difficulty">Opponent Difficulty</label>
+                        <select id="difficulty">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="position">Your Position</label>
+                        <select id="position">
+                            <option value="proposition">Proposition</option>
+                            <option value="opposition">Opposition</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="startDebate()">Start Mock Debate</button>
+
+                <div class="debate-interface" id="debate-interface">
+                    <div class="debate-header">
+                        <div>
+                            <div class="debate-status" id="debate-phase">Opening Statement</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Round 1 of 6</div>
+                        </div>
+                        <div class="timer" id="timer">5:00</div>
+                    </div>
+
+                    <div class="debate-messages" id="debate-messages"></div>
+
+                    <div class="input-area">
+                        <textarea id="debate-input" placeholder="Enter your argument..." rows="3"></textarea>
+                        <button class="btn" onclick="submitArgument()" style="white-space: nowrap;">Submit</button>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-secondary" onclick="endDebate()">End Debate</button>
+                    </div>
+                </div>
+
+                <div class="debrief-section" id="debrief-section">
+                    <h2 style="margin-bottom: 25px;">Debate Debrief</h2>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="overall-score">B+</div>
+                            <div class="stat-label">Overall Performance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="argument-score">82%</div>
+                            <div class="stat-label">Argument Strength</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="rebuttal-score">75%</div>
+                            <div class="stat-label">Rebuttal Quality</div>
+                        </div>
+                    </div>
+
+                    <div class="debrief-card">
+                        <h3>💪 Strengths</h3>
+                        <div id="strengths-content"></div>
+                    </div>
+
+                    <div class="debrief-card">
+                        <h3>⚠️ Areas for Improvement</h3>
+                        <div id="improvements-content"></div>
+                    </div>
+
+                    <div class="debrief-card">
+                        <h3>🎯 Missed Opportunities</h3>
+                        <div id="opportunities-content"></div>
+                    </div>
+
+                    <div class="debrief-card">
+                        <h3>📚 Recommended Evidence</h3>
+                        <div id="evidence-content"></div>
+                    </div>
+
+                    <button class="btn" onclick="startNewDebate()">Start New Debate</button>
+                </div>
+            </div>
+
+            <!-- Progress Mode -->
+            <div id="progress-mode" class="mode-section">
+                <h1>Your Progress</h1>
+                <p class="subtitle">Track your improvement over time</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Practice Debates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Research Packages</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">Avg Performance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">24h</div>
+                        <div class="stat-label">Time Saved</div>
+                    </div>
+                </div>
+
+                <div class="debrief-card">
+                    <h3>Recent Activity</h3>
+                    <div class="debrief-item">
+                        <strong>Mock Debate - Parliamentary Format</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Topic: Climate Change Policy | Score: B+ | 2 days ago</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Research Package Generated</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Topic: Economic Growth vs Environment | 3 days ago</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Mock Debate - Lincoln-Douglas</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Topic: Civil Liberties | Score: A- | 5 days ago</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Research Package Generated</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Topic: Healthcare Reform | 1 week ago</p>
+                    </div>
+                </div>
+
+                <div class="debrief-card">
+                    <h3>Improvement Trends</h3>
+                    <div class="debrief-item">
+                        <strong>Argument Construction</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Improved from 72% to 85% over last 10 debates</p>
+                        <div style="background: #e7f0ff; height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden;">
+                            <div style="background: #667eea; height: 100%; width: 85%; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Rebuttal Speed</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Response time decreased by 35%</p>
+                        <div style="background: #e7f0ff; height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden;">
+                            <div style="background: #28a745; height: 100%; width: 78%; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Evidence Usage</strong>
+                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Citations per argument increased from 1.2 to 2.1</p>
+                        <div style="background: #e7f0ff; height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden;">
+                            <div style="background: #667eea; height: 100%; width: 90%; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedSources = [];
+        let debateRound = 0;
+        let debateMessages = [];
+        let timerInterval;
+        let timeRemaining = 300;
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(`${mode}-mode`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function startResearch() {
+            const topic = document.getElementById('topic').value;
+            const format = document.getElementById('format').value;
+
+            if (!topic || !format) {
+                alert('Please enter a topic and select a format');
+                return;
+            }
+
+            document.getElementById('research-progress').classList.add('show');
+            document.getElementById('research-results').classList.remove('show');
+            document.getElementById('research-package').classList.remove('show');
+
+            setTimeout(() => {
+                generateMockSources(topic);
+                document.getElementById('research-progress').classList.remove('show');
+                document.getElementById('research-results').classList.add('show');
+            }, 2000);
+        }
+
+        function generateMockSources(topic) {
+            const sources = [
+                {
+                    title: "Economic Growth and Environmental Sustainability: A Comprehensive Analysis",
+                    author: "Smith, J. et al.",
+                    year: "2024",
+                    source: "Journal of Environmental Economics",
+                    tags: ["Claims", "Warrants", "Impact Evidence"],
+                    excerpt: "Research demonstrates that sustainable development policies can achieve both economic growth and environmental protection..."
+                },
+                {
+                    title: "The Cost of Environmental Regulation on Small Business",
+                    author: "Johnson, M.",
+                    year: "2023",
+                    source: "Economic Policy Review",
+                    tags: ["Counter-Arguments", "Economic Data"],
+                    excerpt: "Analysis of regulatory burden shows significant compliance costs for small and medium enterprises..."
+                },
+                {
+                    title: "Climate Change: Economic Impacts and Policy Responses",
+                    author: "Chen, L. & Rodriguez, A.",
+                    year: "2024",
+                    source: "Nature Climate Science",
+                    tags: ["Impact Evidence", "Scientific Data"],
+                    excerpt: "Long-term economic modeling indicates that environmental degradation costs exceed short-term growth benefits..."
+                },
+                {
+                    title: "Balancing Development and Conservation: Case Studies",
+                    author: "Williams, R.",
+                    year: "2023",
+                    source: "World Bank Policy Paper",
+                    tags: ["Examples", "Comparative Analysis"],
+                    excerpt: "Examination of successful policies from 15 nations that achieved economic targets while reducing emissions..."
+                },
+                {
+                    title: "Regulatory Framework and Innovation in Green Technology",
+                    author: "Patel, S.",
+                    year: "2024",
+                    source: "Technology & Innovation Quarterly",
+                    tags: ["Warrants", "Theoretical Framework"],
+                    excerpt: "Environmental regulations drive technological innovation and create new economic opportunities in green sectors..."
+                },
+                {
+                    title: "Short-term Economic Growth vs Long-term Sustainability",
+                    author: "Anderson, K. et al.",
+                    year: "2023",
+                    source: "Harvard Business Review",
+                    tags: ["Strategic Analysis", "Risk Assessment"],
+                    excerpt: "Trade-off analysis reveals that prioritizing immediate growth may create systemic risks for future stability..."
+                }
+            ];
+
+            const container = document.getElementById('sources-container');
+            container.innerHTML = '';
+            selectedSources = [];
+
+            sources.forEach((source, index) => {
+                const card = document.createElement('div');
+                card.className = 'source-card';
+                card.onclick = () => toggleSource(index);
+                card.innerHTML = `
+                    <div class="source-title">${source.title}</div>
+                    <div class="source-meta">${source.author} (${source.year}) - ${source.source}</div>
+                    <p style="color: #555; font-size: 14px; margin-top: 10px;">${source.excerpt}</p>
+                    <div class="source-tags">
+                        ${source.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleSource(index) {
+            const cards = document.querySelectorAll('.source-card');
+            const card = cards[index];
+
+            if (selectedSources.includes(index)) {
+                selectedSources = selectedSources.filter(i => i !== index);
+                card.classList.remove('selected');
+            } else {
+                selectedSources.push(index);
+                card.classList.add('selected');
+            }
+        }
+
+        function generatePackage() {
+            if (selectedSources.length === 0) {
+                alert('Please select at least one source');
+                return;
+            }
+
+            const packageContent = document.getElementById('package-content');
+            packageContent.innerHTML = `
+                <div class="package-section">
+                    <h3>Claims & Core Arguments</h3>
+                    <div class="debrief-item">
+                        <strong>Primary Claim:</strong>
+                        <p>Sustainable development policies enable simultaneous economic growth and environmental protection through innovation-driven markets.</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Supporting Claim:</strong>
+                        <p>Environmental regulations drive technological advancement in green sectors, creating new economic opportunities.</p>
+                    </div>
+                </div>
+
+                <div class="package-section">
+                    <h3>Evidence & Warrants</h3>
+                    <div class="debrief-item">
+                        <strong>Source: Smith et al. (2024)</strong>
+                        <p>"Research demonstrates that sustainable development policies can achieve both economic growth and environmental protection through integrated planning frameworks."</p>
+                        <p style="margin-top: 8px; font-size: 13px; color: #667eea;">→ Use for: Establishing feasibility of balanced approach</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Source: Chen & Rodriguez (2024)</strong>
+                        <p>"Long-term economic modeling indicates that environmental degradation costs exceed short-term growth benefits by a factor of 3:1 over 20-year periods."</p>
+                        <p style="margin-top: 8px; font-size: 13px; color: #667eea;">→ Use for: Impact comparison and temporal analysis</p>
+                    </div>
+                </div>
+
+                <div class="package-section">
+                    <h3>Counter-Arguments & Rebuttals</h3>
+                    <div class="debrief-item">
+                        <strong>Expected Opposition: Regulatory Burden</strong>
+                        <p><em>Rebuttal:</em> While Johnson (2023) documents compliance costs, Williams (2023) demonstrates 15 case studies where phased implementation and support programs minimized business disruption.</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Expected Opposition: Immediate Economic Needs</strong>
+                        <p><em>Rebuttal:</em> Anderson et al. (2023) show that short-term prioritization creates systemic risks that undermine long-term stability and future growth potential.</p>
+                    </div>
+                </div>
+
+                <div class="package-section">
+                    <h3>Examples & Case Studies</h3>
+                    <div class="debrief-item">
+                        <strong>Williams (2023) - Comparative Policy Analysis</strong>
+                        <p>15 nations successfully balanced economic targets with emission reductions through: integrated planning, green technology investment, and phased regulatory implementation.</p>
+                    </div>
+                </div>
+
+                <div class="package-section">
+                    <h3>Impact Evidence</h3>
+                    <div class="debrief-item">
+                        <strong>Environmental Impact:</strong>
+                        <p>Climate change costs projected at $23 trillion by 2050 without intervention (Chen & Rodriguez, 2024)</p>
+                    </div>
+                    <div class="debrief-item">
+                        <strong>Economic Impact:</strong>
+                        <p>Green technology sector growth at 12% annually, creating 2.4M jobs (Patel, 2024)</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('research-package').classList.add('show');
+            document.getElementById('research-package').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportPackage() {
+            alert('Research package exported! In the full version, this would download a formatted PDF or share with team members.');
+        }
+
+        function resetResearch() {
+            document.getElementById('research-results').classList.remove('show');
+            document.getElementById('research-package').classList.remove('show');
+            document.getElementById('topic').value = '';
+            document.getElementById('format').value = '';
+            selectedSources = [];
+        }
+
+        function startDebate() {
+            const topic = document.getElementById('debate-topic').value;
+            const format = document.getElementById('debate-format').value;
+
+            if (!topic) {
+                alert('Please enter a debate topic');
+                return;
+            }
+
+            debateRound = 0;
+            debateMessages = [];
+            timeRemaining = 300;
+            
+            document.getElementById('debate-interface').classList.add('active');
+            document.getElementById('debrief-section').classList.remove('show');
+            document.getElementById('debate-messages').innerHTML = '';
+
+            addDebateMessage('ai', 'Welcome to the mock debate. I will be arguing the opposition position. You have 5 minutes for your opening statement. Good luck!');
+
+            startTimer();
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    addDebateMessage('ai', 'Time is up for this round. Please submit your argument or move to the next phase.');
+                }
+            }, 1000);
+        }
+
+        function addDebateMessage(type, content) {
+            const messagesDiv = document.getElementById('debate-messages');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.innerHTML = `
+                <div class="message-header">${type === 'user' ? 'You (Proposition)' : 'AI Opponent (Opposition)'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            messagesDiv.appendChild(message);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            debateMessages.push({ type, content });
+        }
+
+        function submitArgument() {
+            const input = document.getElementById('debate-input');
+            const argument = input.value.trim();
+
+            if (!argument) {
+                alert('Please enter your argument');
+                return;
+            }
+
+            addDebateMessage('user', argument);
+            input.value = '';
+
+            debateRound++;
+            updateDebatePhase();
+
+            setTimeout(() => {
+                generateAIResponse(argument);
+            }, 1500);
+        }
+
+        function updateDebatePhase() {
+            const phases = [
+                'Opening Statement',
+                'Rebuttal',
+                'Cross-Examination',
+                'Defense',
+                'Closing Arguments',
+                'Final Rebuttal'
+            ];
+            
+            const phaseIndex = Math.min(debateRound, phases.length - 1);
+            document.getElementById('debate-phase').textContent = phases[phaseIndex];
+        }
+
+        function generateAIResponse(userArgument) {
+            const responses = [
+                "While your argument about economic benefits is compelling, you haven't adequately addressed the long-term costs of environmental degradation. Studies show that unchecked growth leads to resource depletion that ultimately harms economic stability.",
+                "I appreciate your point about innovation, but the evidence suggests that market forces alone are insufficient. Without regulatory frameworks, businesses consistently prioritize short-term profits over environmental sustainability.",
+                "Your claim about job creation overlooks the fact that environmental sectors are among the fastest-growing employment areas. The transition to sustainable practices actually generates more jobs than it eliminates.",
+                "The timeframe you're proposing for economic growth ignores the urgency of climate action. We cannot afford to delay environmental protection for the sake of marginal short-term gains that may be irreversible.",
+                "Your rebuttal fails to account for the economic opportunities in green technology. Countries that invested early in environmental protection now lead in innovation and have stronger, more resilient economies."
+            ];
+
+            const response = responses[Math.min(debateRound - 1, responses.length - 1)];
+            addDebateMessage('ai', response);
+
+            if (debateRound >= 5) {
+                setTimeout(() => {
+                    addDebateMessage('ai', 'We have completed all debate rounds. Click "End Debate" to see your debrief and performance analysis.');
+                }, 1000);
+            }
+        }
+
+        function endDebate() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            document.getElementById('debate-interface').classList.remove('active');
+            generateDebrief();
+            document.getElementById('debrief-section').classList.add('show');
+            document.getElementById('debrief-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateDebrief() {
+            document.getElementById('strengths-content').innerHTML = `
+                <div class="debrief-item">
+                    <strong>Strong Opening Framework</strong>
+                    <p>Your initial argument established a clear framework and thesis. The logical structure helped guide the debate effectively.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Evidence Integration</strong>
+                    <p>You successfully incorporated research to support key claims, particularly in your second and third arguments.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Consistent Messaging</strong>
+                    <p>You maintained focus on your core argument throughout the debate without contradicting earlier points.</p>
+                </div>
+            `;
+
+            document.getElementById('improvements-content').innerHTML = `
+                <div class="debrief-item">
+                    <strong>Rebuttal Depth</strong>
+                    <p>Your rebuttals addressed surface-level concerns but didn't fully engage with the underlying warrants of opposition arguments. Consider pre-empting counter-arguments more thoroughly.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Impact Comparison</strong>
+                    <p>You presented impacts but didn't clearly weigh them against opposing impacts. Judges need explicit comparative analysis to evaluate trade-offs.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Time Management</strong>
+                    <p>Your final argument felt rushed. Practice pacing to ensure you have adequate time for closing statements.</p>
+                </div>
+            `;
+
+            document.getElementById('opportunities-content').innerHTML = `
+                <div class="debrief-item">
+                    <strong>Concession Strategy</strong>
+                    <p>When opponent mentioned resource depletion, you could have conceded minor points while reframing the larger debate in your favor.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Cross-Application</strong>
+                    <p>Your evidence about green technology job creation could have been applied to rebut the regulatory burden argument more effectively.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Crystallization</strong>
+                    <p>In the final round, summarizing the key voting issues would have helped judges organize their decision-making.</p>
+                </div>
+            `;
+
+            document.getElementById('evidence-content').innerHTML = `
+                <div class="debrief-item">
+                    <strong>Strengthen your impact evidence</strong>
+                    <p>Look for sources that provide specific timeframes and magnitudes for economic impacts. The opponent's reference to "long-term costs" deserves quantified counter-evidence.</p>
+                </div>
+                <div class="debrief-item">
+                    <strong>Comparative studies</strong>
+                    <p>Research nations that achieved growth while implementing environmental protections. Case studies would strengthen your feasibility claims.</p>
+                </div>
+            `;
+        }
+
+        function startNewDebate() {
+            document.getElementById('debrief-section').classList.remove('show');
+            document.getElementById('debate-topic').value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
